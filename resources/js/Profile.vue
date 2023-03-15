@@ -2,33 +2,39 @@
     <v-app id="inspire">
         <v-app-bar>
             <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title>Profile</v-toolbar-title>
+            <v-toolbar-title>Welcome, {{ loggedUser.name }} </v-toolbar-title>
             <v-spacer />
             <v-btn class="text-right" @click="logout">Logout</v-btn>
         </v-app-bar>
         <v-navigation-drawer v-model="drawer" temporary>
-            <div class="d-flex justify-center my-10">
+            <div class="d-flex justify-center my-10" v-if="canViewRolesAndPermissions">
                 <router-link to="/home">Dashboard</router-link>
             </div>
-            <div class="d-flex justify-center my-10">
+            <div class="d-flex justify-center my-10" v-if="canViewUsers">
                 <router-link to="/user-management">User management</router-link>
             </div>
-            <div class="d-flex justify-center my-10">
+            <div class="d-flex justify-center my-10" v-if="canViewCourses">
                 <router-link to="/courses">Courses</router-link>
             </div>
-            <div class="d-flex justify-center my-10">
+            <div class="d-flex justify-center my-10" v-if="canViewRolesAndPermissions">
                 <router-link to="/roles-and-permissions">Roles and Permissions</router-link>
             </div>
         </v-navigation-drawer>
         <v-main>
             <v-container>
                 <v-row>
+                    <div class="d-flex justify-center align-center">
+                        <h2>Permissions:</h2>
+                    </div>
+                </v-row>
+                <v-row>
                     <v-col>
-                        <div class="d-flex justify-center align-center" style="height: 50vh">
-                            <h2>Profile Page</h2>
-                        </div>
+                        <ul>
+                            <li v-for="permission in loggedUser.permissions" :key="permission">
+                                {{ permission.name }}
+                            </li>
+                        </ul>
                     </v-col>
-
                 </v-row>
             </v-container>
         </v-main>
@@ -36,17 +42,73 @@
 </template>
 
 <script>
+
+import { mapState } from 'vuex';
+
 export default {
     name: 'Profile',
 
     data: () => ({
-        drawer: false
+        drawer: false,
     }),
 
+    created() {
+        this.getAuthUser();
+    },
+
+    computed: {
+        ...mapState({
+            loggedUser: state => state.user
+        }),
+
+        canViewCourses () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name == "view courses") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        },
+
+        canViewUsers () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name == "view users") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        },
+
+        canViewRolesAndPermissions () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name == "view roles and permissions") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        }
+    },
+
     methods: {
+        getAuthUser () {
+            this.$http.get('auth-user')
+                .then(response => {
+                    this.$store.state.user = response.data.user
+                })
+        },
+
         logout () {
             this.$http.get("/logout").then(() => this.$router.push({ path: '/' }));
-        }
+        },
     }
 }
 </script>

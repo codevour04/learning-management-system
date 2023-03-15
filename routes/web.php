@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PermissionController;
 
 Route::middleware([Authenticate::class])->group(function () {
     Route::get('/profile', function () {
@@ -20,9 +20,14 @@ Route::middleware([Authenticate::class])->group(function () {
         return view('welcome');
     });
 
+    Route::get('/permissions', [PermissionController::class, 'fetch']);
+
     Route::group(['middleware' => ['permission:view roles and permissions']], function () {
         Route::get('/roles-and-permissions', [PermissionController::class, 'index']);
-        Route::get('/permissions', [PermissionController::class, 'fetch']);
+        Route::get('/home', function () {
+            return view('home');
+        })
+        ->name("home");
     });
 
     Route::controller(UserController::class)->group(function () {
@@ -32,18 +37,13 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::delete('/user/{user}', 'destroy')->middleware('can:delete users');
         Route::put('/user/{user}/permission', [UserController::class, 'givePermissionTo'])
         ->middleware('can:give permission users');
+        Route::get('/auth-user', [UserController::class, 'getAuthUser']);
         Route::get('/logout', 'logout');
     });
 
     Route::get('/roles-and-permissions', function () {
         return view('home');
     })
-    ->middleware('can:view roles and permissions');
-
-    Route::get('/home', function () {
-        return view('home');
-    })
-    ->name("home")
     ->middleware('can:view roles and permissions');
 
     Route::get('/user-management', function () {
