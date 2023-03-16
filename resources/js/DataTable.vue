@@ -6,13 +6,13 @@
             <v-spacer />
             <v-btn class="text-right" @click="logout">Logout</v-btn>
         </v-app-bar>
-        <v-navigation-drawer v-model="drawer" temporary>
+        <v-navigation-drawer v-model="drawer">
             <div class="d-flex justify-center my-10">
                 <router-link to="/home">Dashboard</router-link>
             </div>
         </v-navigation-drawer>
         <v-main class="bg-grey-lighten-2">
-            <v-container class="bg-surface-variant">
+            <v-container>
                 <v-row>
                     <v-col>
                     <v-table>
@@ -63,19 +63,16 @@
         </v-main>
     </v-app>
     <add-user-modal ref="addModal" @closeModal="resetData"></add-user-modal>
-    <read-user-modal ref="readModal"></read-user-modal>
     <edit-user-modal ref="editModal" @updateUser="resetData"></edit-user-modal>
-    <delete-user-modal ref="confirmModal" @deleteUser="resetData"></delete-user-modal>
-    <!-- <give-permission-modal ref="permissionModal"></give-permission-modal> -->
+    <give-permission-modal ref="permissionModal"></give-permission-modal>
 </template>
 
 <script>
 
 import AddUserModal from './AddUserModal.vue';
-import ReadUserModal from './ReadUserModal.vue';
 import EditUserModal from './EditUserModal.vue';
-import DeleteUserModal from './DeleteUserModal.vue';
 import GivePermissionModal from './GivePermissionModal.vue';
+import SwalMessageMixin from './mixins/SwalMessageMixin';
 import { mapState } from 'vuex';
 
 export default {
@@ -83,11 +80,11 @@ export default {
 
     components: {
         AddUserModal,
-        ReadUserModal,
         EditUserModal,
-        DeleteUserModal,
-        GivePermissionModal
+        GivePermissionModal,
     },
+
+    mixins: [SwalMessageMixin],
 
     data: () => ({
         users: [],
@@ -181,15 +178,14 @@ export default {
         },
 
         readUser (user) {
-            this.$refs.readModal.showDialog(user);
+            this.basicAlertMessage({
+                html: `<h4 style="text-align: left">name: ${user.name} </br> email: ${user.email} </h4>`,
+                confirmButtonColor: '#3085d6',
+            })
         },
 
         updateUser (user) {
             this.$refs.editModal.showModal(user);
-        },
-
-        deleteUser (user) {
-            console.log(user);
         },
 
         openModal () {
@@ -201,8 +197,34 @@ export default {
             this.fetchUser();
         },
 
-        showConfirmModal (item) {
-            this.$refs.confirmModal.showModal(item);
+        showConfirmModal (user) {
+            let config = {
+                html: `<h4>Email: ${user.email} </h4>`,
+                title: 'Are you sure you want to delete the user?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }
+
+            this.$swal.fire(config).then((result) => {
+                if (result.isConfirmed) {
+                    this.deleteUser(user)
+                }
+            })
+
+            // this.$refs.confirmModal.showModal(item);
+        },
+
+        deleteUser (user) {
+            let id = user.id;
+
+            this.$http.delete("user/"+id)
+                .then(() => {
+                    this.successAlertMessage('User has been deleted')
+                    this.resetData()
+                })
         },
 
         logout () {
