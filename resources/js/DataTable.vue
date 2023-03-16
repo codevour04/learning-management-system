@@ -69,11 +69,11 @@
 
 <script>
 
+import { mapState } from 'vuex';
 import AddUserModal from './AddUserModal.vue';
 import EditUserModal from './EditUserModal.vue';
 import GivePermissionModal from './GivePermissionModal.vue';
 import SwalMessageMixin from './mixins/SwalMessageMixin';
-import { mapState } from 'vuex';
 
 export default {
     name: 'DataTable',
@@ -87,9 +87,9 @@ export default {
     mixins: [SwalMessageMixin],
 
     data: () => ({
-        users: [],
         drawer: false,
         loading: false,
+        users: [],
 
     }),
 
