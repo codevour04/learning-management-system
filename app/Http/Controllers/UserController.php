@@ -13,10 +13,21 @@ class UserController extends Controller
 {
     public function index(): JsonResponse
     {
-        $user_logged = Auth::user();
         $user = User::select(["id", "name", "email"])->orderBy("created_at", "DESC")->get();
 
         return response()->json($user);
+    }
+
+    public function getAuthUser(): JsonResponse
+    {
+        $user = User::findOrFail(Auth::user()->id);
+
+        $data = [
+            "user" => $user,
+            "permissions" => $user->getPermissionNames()
+        ];
+
+        return response()->json($data);
     }
 
     public function store(Request $request): void

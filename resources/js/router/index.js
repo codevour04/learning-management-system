@@ -25,6 +25,9 @@ const routes = [
     {
         path: '/home',
         component: AdminPage,
+        meta: {
+            permission: "view roles and permissions"
+        }
     },
 
     {

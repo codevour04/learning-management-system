@@ -2,7 +2,7 @@
     <v-app id="inspire">
         <v-app-bar>
             <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title>Users</v-toolbar-title>
+            <v-toolbar-title>Welcome, {{ loggedUser.name }} </v-toolbar-title>
             <v-spacer />
             <v-btn class="text-right" @click="logout">Logout</v-btn>
         </v-app-bar>
@@ -32,16 +32,16 @@
                                 <td @click="readUser(item)">
                                     <v-btn color="blue">Read</v-btn>
                                 </td>
-                                <td @click="updateUser(item)">
+                                <td @click="updateUser(item)" v-if="canUpdateUser">
                                     <v-btn color="green">Edit</v-btn>
                                 </td>
-                                <td @click="showConfirmModal(item)">
+                                <td @click="showConfirmModal(item)" v-if="canDeleteUser">
                                     <v-btn color="red">Delete</v-btn>
                                 </td>
-                                <td @click="openPermissionModal(item, 'add')">
+                                <td @click="openPermissionModal(item, 'add')" v-if="canGivePermissionUser">
                                     <v-btn color="yellow">Give Permission</v-btn>
                                 </td>
-                                <td @click="openPermissionModal(item, 'remove')">
+                                <td @click="openPermissionModal(item, 'remove')" v-if="canGivePermissionUser">
                                     <v-btn color="green">Remove Permission</v-btn>
                                 </td>
                             </tr>
@@ -50,7 +50,14 @@
                     </v-col>
                 </v-row>
                 <v-row>
-                    <v-btn class="ml-3 mb-3" color="green" @click="openModal">Add User</v-btn>
+                    <v-btn
+                        class="ml-3 mb-3"
+                        color="green"
+                        @click="openModal"
+                        v-if="canAddUser"
+                    >
+                        Add User
+                    </v-btn>
                 </v-row>
             </v-container>
         </v-main>
@@ -59,7 +66,7 @@
     <read-user-modal ref="readModal"></read-user-modal>
     <edit-user-modal ref="editModal" @updateUser="resetData"></edit-user-modal>
     <delete-user-modal ref="confirmModal" @deleteUser="resetData"></delete-user-modal>
-    <give-permission-modal ref="permissionModal"></give-permission-modal>
+    <!-- <give-permission-modal ref="permissionModal"></give-permission-modal> -->
 </template>
 
 <script>
@@ -69,6 +76,7 @@ import ReadUserModal from './ReadUserModal.vue';
 import EditUserModal from './EditUserModal.vue';
 import DeleteUserModal from './DeleteUserModal.vue';
 import GivePermissionModal from './GivePermissionModal.vue';
+import { mapState } from 'vuex';
 
 export default {
     name: 'DataTable',
@@ -90,6 +98,72 @@ export default {
 
     created() {
         this.fetchUser();
+    },
+
+    computed: {
+        ...mapState({
+            loggedUser: state => state.user,
+        }),
+
+        canDeleteUser () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name === "delete users") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        },
+
+        canAddUser () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name === "add users") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        },
+
+        canEditUser () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name === "edit users") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        },
+
+        canUpdateUser () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name === "update users") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        },
+
+        canGivePermissionUser () {
+            let canDo = false;
+
+            this.loggedUser.permissions.forEach(permission => {
+                if (permission.name === "give permission users") {
+                    canDo = true;
+                }
+            });
+
+            return canDo;
+        },
     },
 
     methods: {
@@ -137,7 +211,7 @@ export default {
 
         openPermissionModal (user, action) {
             this.$refs.permissionModal.showModal(user, action);
-        }
+        },
     }
 }
 </script>
