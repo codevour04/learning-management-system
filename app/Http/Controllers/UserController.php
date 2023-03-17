@@ -3,22 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
-    public function index(): JsonResponse
+    public function getUserList(Request $request): JsonResponse
     {
-        $user = User::select(["id", "name", "email"])->orderBy("created_at", "DESC")->get();
+        $has_search = $request->keyword;
+
+        $user = User::select(["id", "name", "email"])
+            ->with("permissions")
+            ->when($has_search,
+            function ($query) use ($has_search) {
+                $query->where('name', 'LIKE', "$has_search%");
+            })
+            ->orderBy("created_at", "DESC")
+            ->get();
 
         return response()->json($user);
     }
 
-    public function getAuthUser(): JsonResponse
+    public function getAuthUser(Request $request): JsonResponse
     {
         $user = User::findOrFail(Auth::user()->id);
 
@@ -65,6 +75,13 @@ class UserController extends Controller
         } else {
             $user->revokePermissionTo($request->permission_name);
         }
+    }
+
+    public function getUserPermission(User $user): JsonResponse
+    {
+        $permissions = $user->getAllPermissions();
+
+        return response()->json($permissions);
     }
 
     public function logout()

@@ -6,7 +6,7 @@
             <v-spacer />
             <v-btn class="text-right" @click="logout">Logout</v-btn>
         </v-app-bar>
-        <v-navigation-drawer v-model="drawer" temporary>
+        <v-navigation-drawer v-model="drawer">
             <div class="d-flex justify-center my-10" v-if="canViewRolesAndPermissions">
                 <router-link to="/home">Dashboard</router-link>
             </div>
@@ -20,20 +20,22 @@
                 <router-link to="/roles-and-permissions">Roles and Permissions</router-link>
             </div>
         </v-navigation-drawer>
-        <v-main>
+        <v-main class="bg-grey-lighten-2">
             <v-container>
                 <v-row>
-                    <div class="d-flex justify-center align-center">
-                        <h2>Permissions:</h2>
-                    </div>
-                </v-row>
-                <v-row>
                     <v-col>
-                        <ul>
+                        <v-table style="padding: 30px">
+                        <thead>
+                            <h2>Permissions:</h2>
+                        </thead>
+                        <tbody>
+                            <ul>
                             <li v-for="permission in loggedUser.permissions" :key="permission">
                                 {{ permission.name }}
                             </li>
                         </ul>
+                        </tbody>
+                        </v-table>
                     </v-col>
                 </v-row>
             </v-container>

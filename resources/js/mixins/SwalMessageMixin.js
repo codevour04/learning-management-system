@@ -2,11 +2,11 @@ export default {
     name: 'SwalMessageMixin',
 
     methods: {
-        basicAlertMessage (config) {
+        swalMixinbasicMessage (config) {
             this.$swal.fire(config)
         },
 
-        successAlertMessage (message) {
+        swalMixinSuccessMessage (message) {
             this.$swal.fire(message, '', 'success')
         }
     },

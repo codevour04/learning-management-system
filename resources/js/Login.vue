@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex justify-center align-center" style="height: 50vh">
+    <div class="d-flex justify-center align-center" style="height: 70vh">
     <v-card min-width="400">
             <v-card-text>
                 <v-form

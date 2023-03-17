@@ -1,31 +1,46 @@
 <template>
     <v-app id="inspire">
-        <v-app-bar>
+        <v-app-bar :elevation="1" class="bg-amber-darken-4">
             <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
             <v-toolbar-title>Welcome, {{ loggedUser.name }} </v-toolbar-title>
             <v-spacer />
             <v-btn class="text-right" @click="logout">Logout</v-btn>
         </v-app-bar>
-        <v-navigation-drawer v-model="drawer">
+        <v-navigation-drawer class="bg-amber-darken-4" v-model="drawer">
             <div class="d-flex justify-center my-10">
                 <router-link to="/home">Dashboard</router-link>
             </div>
         </v-navigation-drawer>
-        <v-main class="bg-grey-lighten-2">
-            <v-container>
+        <v-main class="bg-grey-lighten-1">
+            <v-container fluid class="elevation-2">
+                <v-row>
+                    <v-col>
+                        <v-text-field
+                            v-model="keyword"
+                            label="Search"
+                            single-line
+                            hide-details
+                        ></v-text-field>
+                    </v-col>
+                    <v-col>
+                        <v-btn @click="fetchUser">
+                            Search
+                        </v-btn>
+                    </v-col>
+                </v-row>
                 <v-row>
                     <v-col>
                     <v-table>
+                        <v-spacer></v-spacer>
                         <thead>
                             <tr>
                                 <template v-for="(header, index) in users" :key="index">
                                     <th class="text-left" v-if="index == 0"> Name </th>
                                     <th class="text-left" v-else-if="index == 1"> Email </th>
-                                    <th class="text-left" v-else></th>
                                 </template>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="user-list">
                             <tr v-for="item in users" :key="item.name">
                                 <td>{{ item.name }}</td>
                                 <td>{{ item.email }}</td>
@@ -41,8 +56,15 @@
                                 <td @click="openPermissionModal(item, 'add')" v-if="canGivePermissionUser">
                                     <v-btn color="yellow">Give Permission</v-btn>
                                 </td>
-                                <td @click="openPermissionModal(item, 'remove')" v-if="canGivePermissionUser">
+                                <td
+                                    @click="openPermissionModal(item, 'remove')"
+                                    v-if="canGivePermissionUser && item.permissions.length > 0">
                                     <v-btn color="green">Remove Permission</v-btn>
+                                </td>
+                                <td v-else>
+                                    <span>
+                                        This user has no permissions
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -62,10 +84,21 @@
             </v-container>
         </v-main>
     </v-app>
-    <add-user-modal ref="addModal" @closeModal="resetData"></add-user-modal>
-    <edit-user-modal ref="editModal" @updateUser="resetData"></edit-user-modal>
-    <give-permission-modal ref="permissionModal"></give-permission-modal>
+    <add-user-modal ref="addModal" @closeModal="showSuccessMessage"></add-user-modal>
+    <edit-user-modal ref="editModal" @updateUser="showSuccessMessage"></edit-user-modal>
+    <give-permission-modal ref="permissionModal" @permission-add-remove="showSuccessMessage"></give-permission-modal>
 </template>
+
+<style scoped>
+a {
+    color: #ffff;
+    text-decoration: none;
+}
+
+.user-list tr:nth-child(odd) {
+    background-color: #80808042;
+}
+</style>
 
 <script>
 
@@ -90,10 +123,12 @@ export default {
         drawer: false,
         loading: false,
         users: [],
-
+        swalMessage: "",
+        keyword: "",
     }),
 
     created() {
+        this.getAuthUser();
         this.fetchUser();
     },
 
@@ -165,8 +200,14 @@ export default {
 
     methods: {
         fetchUser () {
-            this.$http.get('/user').then(response => {
+            this.$http.get('fetch-user', {
+                params: {
+                    keyword: this.keyword
+                }
+            })
+            .then(response => {
                 if (response.status == 200) {
+                    console.log(response.data);
                     this.users = response.data;
                 }
             })
@@ -177,18 +218,25 @@ export default {
             });
         },
 
+        showSuccessMessage() {
+            this.swalMixinSuccessMessage(this.swalMessage)
+            this.fetchUser()
+        },
+
         readUser (user) {
-            this.basicAlertMessage({
+            this.swalMixinbasicMessage({
                 html: `<h4 style="text-align: left">name: ${user.name} </br> email: ${user.email} </h4>`,
                 confirmButtonColor: '#3085d6',
             })
         },
 
         updateUser (user) {
+            this.swalMessage = 'User has been updated';
             this.$refs.editModal.showModal(user);
         },
 
         openModal () {
+            this.swalMessage = 'User has been added';
             this.$refs.addModal.showDialog();
         },
 
@@ -213,8 +261,6 @@ export default {
                     this.deleteUser(user)
                 }
             })
-
-            // this.$refs.confirmModal.showModal(item);
         },
 
         deleteUser (user) {
@@ -222,8 +268,9 @@ export default {
 
             this.$http.delete("user/"+id)
                 .then(() => {
-                    this.successAlertMessage('User has been deleted')
-                    this.resetData()
+                    this.swalMessage = 'User has been deleted';
+                    this.showSuccessMessage();
+                    this.fetchUser();
                 })
         },
 
@@ -232,7 +279,17 @@ export default {
         },
 
         openPermissionModal (user, action) {
+            let actionWord = (action == 'add') ? 'added' : 'removed';
+
+            this.swalMessage = 'Permission has been ' + actionWord;
             this.$refs.permissionModal.showModal(user, action);
+        },
+
+        getAuthUser () {
+            this.$http.get('auth-user')
+                .then(response => {
+                    this.$store.state.user = response.data.user
+                })
         },
     }
 }
