@@ -8,6 +8,16 @@
                 <v-card-title>
                     Email: {{ user.email }}
                 </v-card-title>
+                <v-card-title>
+                    User permissions:
+                </v-card-title>
+                <ul class="permission-list">
+                    <v-card-title class="permission" v-for="permission in userPermission" :key="permission.id">
+                    <li>
+                        {{ permission.name }}
+                    </li>
+                    </v-card-title>
+                </ul>
                 <v-spacer></v-spacer>
                 <v-card-actions>
                     <v-select
@@ -50,6 +60,12 @@
     </v-dialog>
 </template>
 
+<style scoped>
+.permission-list li {
+    margin-left: 50px;
+}
+</style>
+
 <script>
 export default {
     name: 'GivePermissionModal',
@@ -59,7 +75,8 @@ export default {
         showDialog: false,
         permissions: null,
         permission: "",
-        action: ""
+        action: "",
+        userPermission: null
     }),
 
     created () {
@@ -71,6 +88,7 @@ export default {
             this.showDialog = true;
             this.user = data;
             this.action = action;
+            this.fetchUserPermission()
         },
 
         givePermission () {
@@ -82,6 +100,7 @@ export default {
             this.$http.put('user/' + this.user.id + '/permission', data)
                 .then(() => {
                     this.showDialog = false;
+                    this.emitEvent();
                 })
         },
 
@@ -94,6 +113,7 @@ export default {
             this.$http.put('user/' + this.user.id + '/permission', data)
                 .then(() => {
                     this.showDialog = false;
+                    this.emitEvent();
                 })
         },
 
@@ -103,6 +123,18 @@ export default {
                     this.permissions = response.data.map((permission) => ({
                             "title": permission.name
                     }));
+                })
+        },
+
+        emitEvent () {
+            this.$emit("permission-add-remove");
+        },
+
+        fetchUserPermission () {
+            this.$http.get("permissions/user/"+this.user.id)
+                .then(response => {
+                    this.userPermission = response.data
+                    console.log(this,this.userPermission)
                 })
         }
     }

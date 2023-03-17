@@ -31,7 +31,7 @@ Route::middleware([Authenticate::class])->group(function () {
     });
 
     Route::controller(UserController::class)->group(function () {
-        Route::get('/user', [UserController::class, 'index'])->middleware('can:view users');
+        Route::get('/fetch-user', [UserController::class, 'getUserList'])->middleware('can:view users');
         Route::post('/user', 'store')->middleware('can:add users');
         Route::patch('/user/{user}', 'update')->middleware('can:update users');
         Route::delete('/user/{user}', 'destroy')->middleware('can:delete users');
@@ -39,6 +39,7 @@ Route::middleware([Authenticate::class])->group(function () {
         ->middleware('can:give permission users');
         Route::get('/auth-user', [UserController::class, 'getAuthUser']);
         Route::get('/logout', 'logout');
+        Route::get('/permissions/user/{user}', [UserController::class, 'getUserPermission']);
     });
 
     Route::get('/roles-and-permissions', function () {

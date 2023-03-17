@@ -1,3 +1,4 @@
+import { createPinia } from 'pinia'
 import '@mdi/font/css/materialdesignicons.css'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import 'vuetify/styles'
@@ -24,6 +25,7 @@ const vuetify = createVuetify({
   },
 })
 
-const app = createApp(App).use(vuetify).use(router).use(store).use(VueSweetalert2);
+const app = createApp(App).use(createPinia()).use(store).use(vuetify).use(router).use(VueSweetalert2);
+
 app.config.globalProperties.$http = Axios;
 app.mount('#app')
