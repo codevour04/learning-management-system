@@ -68,6 +68,32 @@ import Modal from './Dialog.vue'
             }
         }),
 
+    created() {
+        var fruits = [3, 5, 4, 2, 3, 2, 3, 5, 1];
+
+
+var position = 1;
+
+for (var x = 0; x < fruits.length; x++) {
+  var end = fruits[x] + position;
+  var start = (position - fruits[x]) - 1;
+  if (start < 0) {
+    start = 0;
+  }
+console.log("position: "+position);
+console.log("value: "+fruits[x]);
+  console.log("start: "+start);
+  console.log("end: "+end);
+  console.log(fruits.slice(start, end));
+  var views = (fruits.slice(start, end));
+  var total = views.reduce((sum, num) => {
+    return sum + num;
+  });
+  console.log("sum: "+total);
+  position++;
+}
+    },
+
     methods: {
         showDialog () {
             this.$refs.modal.showDialog();
