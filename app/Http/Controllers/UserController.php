@@ -47,8 +47,6 @@ class UserController extends Controller
             "email" => $request->email,
             "password" => Hash::make($request->password)
         ]);
-
-        $user = User::select(["name", "email"])->get();
     }
 
     public function update(User $user, Request $request): void

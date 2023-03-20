@@ -29,7 +29,7 @@
                     </v-col>
                 </v-row>
                 <v-row>
-                    <v-col>
+                    <!-- <v-col>
                     <v-table>
                         <v-spacer></v-spacer>
                         <thead>
@@ -69,7 +69,55 @@
                             </tr>
                         </tbody>
                         </v-table>
-                    </v-col>
+                    </v-col> -->
+                       <v-col>
+                            <EasyDataTable
+                                alternating
+                                :headers="headers"
+                                :items="users"
+                            >
+                                <template #item-edit="item" >
+                                    <v-btn
+                                        class="my-5"
+                                        color="green"
+                                        @click="updateUser(item)"
+                                        v-if="canUpdateUser"
+                                        >
+                                        Edit
+                                    </v-btn>
+                                </template>
+                                <template #item-delete="item" >
+                                    <v-btn
+                                        color="red"
+                                        @click="showConfirmModal(item)"
+                                        v-if="canDeleteUser"
+                                    >
+                                        Delete
+                                    </v-btn>
+                                </template>
+                                <template #item-add-permission="item" >
+                                    <v-btn
+                                        color="yellow"
+                                        @click="openPermissionModal(item, 'add')"
+                                        v-if="canGivePermissionUser"
+                                    >
+                                        Give Permission
+                                    </v-btn>
+                                </template>
+                                <template #item-remove-permission="item" >
+                                    <v-btn
+                                        color="green"
+                                        @click="openPermissionModal(item, 'remove')"
+                                        v-if="canGivePermissionUser && item.permissions.length > 0"
+                                    >
+                                        Remove Permission
+                                    </v-btn>
+                                    <span v-else>
+                                        This user has no permissions
+                                    </span>
+                                </template>
+                            </EasyDataTable>
+                       </v-col>
                 </v-row>
                 <v-row>
                     <v-btn
@@ -125,7 +173,16 @@ export default {
         users: [],
         swalMessage: "",
         keyword: "",
-    }),
+        headers:
+        [
+            { text: "Name", value: "name", sortable: true},
+            { text: "EMAIL", value: "email"},
+            { text: "", value: "edit"},
+            { text: "", value: "delete"},
+            { text: "", value: "add-permission"},
+            { text: "", value: "remove-permission"}
+        ],
+        }),
 
     created() {
         this.getAuthUser();
@@ -207,7 +264,6 @@ export default {
             })
             .then(response => {
                 if (response.status == 200) {
-                    console.log(response.data);
                     this.users = response.data;
                 }
             })

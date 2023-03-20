@@ -5,6 +5,7 @@ import Profile from '../Profile.vue'
 import AdminPage from '../AdminPage.vue'
 import RolesAndPermissions from '../RolesAndPermissionsPage.vue'
 import CoursesPage from '../CoursesPage.vue'
+import CustomerList from '../CustomerList.vue'
 
 const routes = [
     {
@@ -32,7 +33,7 @@ const routes = [
 
     {
         path: '/profile',
-        component: Profile,
+        component: CustomerList,
     },
 
     {

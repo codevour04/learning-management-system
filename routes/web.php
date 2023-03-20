@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,10 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::get('/auth-user', [UserController::class, 'getAuthUser']);
         Route::get('/logout', 'logout');
         Route::get('/permissions/user/{user}', [UserController::class, 'getUserPermission']);
+    });
+
+    Route::controller(CustomerController::class)->group(function () {
+        Route::post('/customer', [CustomerController::class, 'store']);
     });
 
     Route::get('/roles-and-permissions', function () {
