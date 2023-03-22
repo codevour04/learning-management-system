@@ -15,7 +15,6 @@
         "@sweetalert2/themes": "^5.0.15",
         "pinia": "^2.0.33",
         "sweetalert2": "^11.7.3",
-        "v-tables-3": "^0.4.7",
         "vue-resource": "^1.5.3",
         "vue-router": "^4.1.6",
         "vue-sweetalert2": "^5.0.5",

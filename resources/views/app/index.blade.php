@@ -4,17 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Home page</title>
+        <title>Landing</title>
     </head>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <script>
-        window.App = {!! json_encode([
-            'user' => Auth::user(),
-            'signedIn' => Auth::check()
-        ]) !!};
-    </script>
-
     <body class="antialiased">
         <div id="app">
         </div>

@@ -14,17 +14,17 @@ const routes = [
     },
 
     {
-        path: '/login',
+        path: '/management/login',
         component: Login
     },
 
     {
-        path: '/register',
+        path: '/management/register',
         component: Login
     },
 
     {
-        path: '/home',
+        path: '/management/home',
         component: AdminPage,
         meta: {
             permission: "view roles and permissions"
@@ -32,22 +32,22 @@ const routes = [
     },
 
     {
-        path: '/profile',
-        component: CustomerList,
+        path: '/management/profile',
+        component: Profile,
     },
 
     {
-        path: '/user-management',
+        path: '/management/user',
         component: DataTable
     },
 
     {
-        path: '/roles-and-permissions',
+        path: '/management/roles-and-permissions',
         component: RolesAndPermissions
     },
 
     {
-        path: '/courses',
+        path: '/management/courses',
         component: CoursesPage
     }
 ];

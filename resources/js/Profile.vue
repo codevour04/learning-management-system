@@ -7,17 +7,8 @@
             <v-btn class="text-right" @click="logout">Logout</v-btn>
         </v-app-bar>
         <v-navigation-drawer v-model="drawer">
-            <div class="d-flex justify-center my-10" v-if="canViewRolesAndPermissions">
-                <router-link to="/home">Dashboard</router-link>
-            </div>
-            <div class="d-flex justify-center my-10" v-if="canViewUsers">
-                <router-link to="/user-management">User management</router-link>
-            </div>
-            <div class="d-flex justify-center my-10" v-if="canViewCourses">
-                <router-link to="/courses">Courses</router-link>
-            </div>
-            <div class="d-flex justify-center my-10" v-if="canViewRolesAndPermissions">
-                <router-link to="/roles-and-permissions">Roles and Permissions</router-link>
+            <div class="d-flex justify-center my-10" >
+                <router-link to="/management/user">User management</router-link>
             </div>
         </v-navigation-drawer>
         <v-main class="bg-grey-lighten-2">
@@ -55,7 +46,7 @@ export default {
     }),
 
     created() {
-        this.getAuthUser();
+        // this.getAuthUser();
     },
 
     computed: {
@@ -102,10 +93,7 @@ export default {
 
     methods: {
         getAuthUser () {
-            this.$http.get('auth-user')
-                .then(response => {
-                    this.$store.state.user = response.data.user
-                })
+            this.$store.state.user = window.App.user
         },
 
         logout () {
