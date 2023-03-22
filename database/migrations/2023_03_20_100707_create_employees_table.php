@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('last_name', 50);
             $table->string('address', 100);
             $table->string('city', 50);
+            $table->string('country', 50);
             $table->string('gender');
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('department_id')->constrained();
             $table->timestamps();
         });
     }

@@ -12,8 +12,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('date');
-            $table->string('amount', 100);
+            $table->dateTime('issued_at');
             $table->text('transaction_number');
             $table->unsignedInteger('status');
             $table->foreignId('customers_id')->constrained();

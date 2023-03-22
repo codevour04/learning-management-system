@@ -8,46 +8,20 @@
         </v-app-bar>
         <v-navigation-drawer v-model="drawer">
             <div class="d-flex justify-center my-10">
-                <router-link to="/profile">Profile</router-link>
+                <router-link to="/management/profile">Profile</router-link>
             </div>
             <div class="d-flex justify-center my-10">
-                <router-link to="/user-management">User management</router-link>
-            </div>
-            <div class="d-flex justify-center my-10">
-                <router-link to="/courses">Courses</router-link>
-            </div>
-            <div class="d-flex justify-center my-10">
-                <router-link to="/roles-and-permissions">Roles and Permissions</router-link>
+                <router-link to="/management/user">User management</router-link>
             </div>
         </v-navigation-drawer>
         <v-main>
             <v-container>
                 <v-row>
                     <v-col>
-                        <router-link to="/user-management">
+                        <router-link to="/management/user">
                             <v-card
                                 width="400"
                                 title="User management"
-                            ></v-card>
-                        </router-link>
-
-                        <!-- <div class="d-flex justify-center align-center" style="height: 50vh">
-                            <ro
-                        </div> -->
-                    </v-col>
-                    <v-col>
-                        <router-link to="/courses">
-                            <v-card
-                                width="400"
-                                title="Courses"
-                            ></v-card>
-                        </router-link>
-                    </v-col>
-                    <v-col>
-                        <router-link to="/roles-and-permissions">
-                            <v-card
-                                width="400"
-                                title="Roles and Permissions"
                             ></v-card>
                         </router-link>
                     </v-col>

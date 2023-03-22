@@ -62,7 +62,7 @@ export default {
         submit () {
             let payload = this.form;
 
-            this.$http.post("/user", payload)
+            this.$http.post("/ajax/user", payload)
             .then(() => {
                 this.showModal = false;
                 this.$emit("closeModal");

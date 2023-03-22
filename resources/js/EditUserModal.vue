@@ -56,7 +56,7 @@ export default {
         submit () {
             let id = this.form.id;
 
-            this.$http.patch("user/"+id, this.form)
+            this.$http.patch("/ajax/user/"+id, this.form)
                 .then(() => {
                     this.$emit("update-user");
                     this.showDialog = false;

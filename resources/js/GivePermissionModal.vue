@@ -88,7 +88,7 @@ export default {
             this.showDialog = true;
             this.user = data;
             this.action = action;
-            this.fetchUserPermission()
+            // this.fetchUserPermission()
         },
 
         givePermission () {
@@ -97,7 +97,7 @@ export default {
                 permission_name: this.permission
             }
 
-            this.$http.put('user/' + this.user.id + '/permission', data)
+            this.$http.put('/ajax/user/' + this.user.id + '/permission', data)
                 .then(() => {
                     this.showDialog = false;
                     this.emitEvent();
@@ -110,7 +110,7 @@ export default {
                 permission_name: this.permission
             }
 
-            this.$http.put('user/' + this.user.id + '/permission', data)
+            this.$http.put('/ajax/user/' + this.user.id + '/permission', data)
                 .then(() => {
                     this.showDialog = false;
                     this.emitEvent();
@@ -118,7 +118,7 @@ export default {
         },
 
         fetchPermissions () {
-            this.$http.get("permissions")
+            this.$http.get("/ajax/permissions")
                 .then(response => {
                     this.permissions = response.data.map((permission) => ({
                             "title": permission.name
@@ -131,10 +131,11 @@ export default {
         },
 
         fetchUserPermission () {
-            this.$http.get("permissions/user/"+this.user.id)
+            this.$http.get("ajax/permissions/user/"+this.user.id)
                 .then(response => {
+                    console.log(response);
                     this.userPermission = response.data
-                    console.log(this,this.userPermission)
+
                 })
         }
     }

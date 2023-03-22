@@ -1,43 +1,5 @@
 <template>
-  <v-form v-model="valid">
-    <v-container>
-      <v-row>
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <v-text-field
-            v-model="transaction.number"
-            :counter="10"
-            label="Transaction no."
-            required
-          ></v-text-field>
-        </v-col>
 
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <v-text-field
-            v-model="transaction.customerId"
-            :counter="10"
-            label="Last name"
-            required
-          ></v-text-field>
-        </v-col>
-
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <v-text-field
-            v-model="transaction.status"
-            label="Status"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-form>
 </template>
 
 <script>
@@ -48,8 +10,33 @@ export default {
         transaction: {
             number: null,
             customerId: null,
-            status: null
-        }
-    })
+            status: null,
+        },
+        headers:
+          [
+            { text: "Name", value: "name", sortable: true},
+            { text: "EMAIL", value: "email"},
+            { text: "", value: "edit"},
+            { text: "", value: "delete"},
+            { text: "", value: "add-permission"},
+            { text: "", value: "remove-permission"}
+        ],
+        trasactions: []
+    }),
+
+    created () {
+      this.fetchTransaction()
+    },
+
+    methods: {
+      fetchTransaction () {
+        this.$http.get('transactions', {
+          params: {
+            keyword: "",
+          }
+        })
+          .then(response => console.log(response));
+      }
+    }
 }
 </script>

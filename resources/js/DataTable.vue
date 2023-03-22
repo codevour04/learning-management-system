@@ -8,7 +8,7 @@
         </v-app-bar>
         <v-navigation-drawer class="bg-amber-darken-4" v-model="drawer">
             <div class="d-flex justify-center my-10">
-                <router-link to="/home">Dashboard</router-link>
+                <router-link to="/management/home">Dashboard</router-link>
             </div>
         </v-navigation-drawer>
         <v-main class="bg-grey-lighten-1">
@@ -29,47 +29,6 @@
                     </v-col>
                 </v-row>
                 <v-row>
-                    <!-- <v-col>
-                    <v-table>
-                        <v-spacer></v-spacer>
-                        <thead>
-                            <tr>
-                                <template v-for="(header, index) in users" :key="index">
-                                    <th class="text-left" v-if="index == 0"> Name </th>
-                                    <th class="text-left" v-else-if="index == 1"> Email </th>
-                                </template>
-                            </tr>
-                        </thead>
-                        <tbody class="user-list">
-                            <tr v-for="item in users" :key="item.name">
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.email }}</td>
-                                <td @click="readUser(item)">
-                                    <v-btn color="blue">Read</v-btn>
-                                </td>
-                                <td @click="updateUser(item)" v-if="canUpdateUser">
-                                    <v-btn color="green">Edit</v-btn>
-                                </td>
-                                <td @click="showConfirmModal(item)" v-if="canDeleteUser">
-                                    <v-btn color="red">Delete</v-btn>
-                                </td>
-                                <td @click="openPermissionModal(item, 'add')" v-if="canGivePermissionUser">
-                                    <v-btn color="yellow">Give Permission</v-btn>
-                                </td>
-                                <td
-                                    @click="openPermissionModal(item, 'remove')"
-                                    v-if="canGivePermissionUser && item.permissions.length > 0">
-                                    <v-btn color="green">Remove Permission</v-btn>
-                                </td>
-                                <td v-else>
-                                    <span>
-                                        This user has no permissions
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                        </v-table>
-                    </v-col> -->
                        <v-col>
                             <EasyDataTable
                                 alternating
@@ -218,18 +177,6 @@ export default {
             return canDo;
         },
 
-        canEditUser () {
-            let canDo = false;
-
-            this.loggedUser.permissions.forEach(permission => {
-                if (permission.name === "edit users") {
-                    canDo = true;
-                }
-            });
-
-            return canDo;
-        },
-
         canUpdateUser () {
             let canDo = false;
 
@@ -257,7 +204,7 @@ export default {
 
     methods: {
         fetchUser () {
-            this.$http.get('fetch-user', {
+            this.$http.get('/ajax/user', {
                 params: {
                     keyword: this.keyword
                 }
@@ -322,7 +269,7 @@ export default {
         deleteUser (user) {
             let id = user.id;
 
-            this.$http.delete("user/"+id)
+            this.$http.delete("/ajax/user/"+id)
                 .then(() => {
                     this.swalMessage = 'User has been deleted';
                     this.showSuccessMessage();
@@ -342,7 +289,7 @@ export default {
         },
 
         getAuthUser () {
-            this.$http.get('auth-user')
+            this.$http.get('/ajax/auth-user')
                 .then(response => {
                     this.$store.state.user = response.data.user
                 })

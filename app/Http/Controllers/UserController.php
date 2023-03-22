@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -12,6 +14,22 @@ use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
+    public function index(Request $request): JsonResponse
+    {
+        $has_search = $request->keyword;
+
+        $user = User::select(["id", "name", "email"])
+            ->with("permissions")
+            ->when($has_search,
+            function ($query) use ($has_search) {
+                $query->where('name', 'LIKE', "$has_search%");
+            })
+            ->orderBy("created_at", "DESC")
+            ->get();
+
+        return response()->json($user);
+    }
+
     public function getUserList(Request $request): JsonResponse
     {
         $has_search = $request->keyword;
