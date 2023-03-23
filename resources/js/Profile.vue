@@ -46,7 +46,7 @@ export default {
         loggedUserPermissions: []
     }),
 
-    created() {
+    mounted () {
         this.getAuthUser();
     },
 
@@ -95,17 +95,19 @@ export default {
     methods: {
         getAuthUser () {
             this.$store.state.user = window.App.user;
+
             this.getAuthUserPermissions();
         },
 
         logout () {
-            this.$http.get("ajax/logout").then(() => this.$router.push({ path: '/' }));
+            this.$http.get("ajax/logout");
+            this.$router.push({ path: '/' });
         },
 
         getAuthUserPermissions () {
             this.$http.get("ajax/permissions/user/"+this.loggedUser.id)
                 .then(response => {
-                    this.userPermission = response.data
+                    this.loggedUserPermissions = response.data
 
                 })
         }

@@ -17,5 +17,10 @@
     <body class="antialiased">
         <div id="app">
         </div>
+        <style scoped>
+        body {
+            background-image: url('/images/management-system.jpg');
+        }
+        </style>
     </body>
 </html>
