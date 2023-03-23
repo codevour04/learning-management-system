@@ -50,12 +50,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail(Auth::user()->id);
 
-        $data = [
-            "user" => $user,
-            "permissions" => $user->getPermissionNames()
-        ];
-
-        return response()->json($data);
+        return response()->json($user->getPermissionNames());
     }
 
     public function store(Request $request): void
@@ -95,7 +90,9 @@ class UserController extends Controller
 
     public function getUserPermission(User $user): JsonResponse
     {
-        $permissions = $user->getAllPermissions();
+        $user = User::findOrFail($user->id);
+
+        $permissions = $user->getPermissionNames();
 
         return response()->json($permissions);
     }

@@ -8,7 +8,7 @@
         </v-app-bar>
         <v-navigation-drawer v-model="drawer">
             <div class="d-flex justify-center my-10" >
-                <router-link to="/management/user">User management</router-link>
+                <router-link to="/user">User management</router-link>
             </div>
         </v-navigation-drawer>
         <v-main class="bg-grey-lighten-2">
@@ -21,8 +21,8 @@
                         </thead>
                         <tbody>
                             <ul>
-                            <li v-for="permission in loggedUser.permissions" :key="permission">
-                                {{ permission.name }}
+                            <li v-for="permission in loggedUserPermissions" :key="permission">
+                                {{ permission }}
                             </li>
                         </ul>
                         </tbody>
@@ -43,10 +43,11 @@ export default {
 
     data: () => ({
         drawer: false,
+        loggedUserPermissions: []
     }),
 
-    created() {
-        // this.getAuthUser();
+    mounted () {
+        this.getAuthUser();
     },
 
     computed: {
@@ -93,12 +94,23 @@ export default {
 
     methods: {
         getAuthUser () {
-            this.$store.state.user = window.App.user
+            this.$store.state.user = window.App.user;
+
+            this.getAuthUserPermissions();
         },
 
         logout () {
-            this.$http.get("/logout").then(() => this.$router.push({ path: '/' }));
+            this.$http.get("ajax/logout");
+            this.$router.push({ path: '/' });
         },
+
+        getAuthUserPermissions () {
+            this.$http.get("ajax/permissions/user/"+this.loggedUser.id)
+                .then(response => {
+                    this.loggedUserPermissions = response.data
+
+                })
+        }
     }
 }
 </script>
