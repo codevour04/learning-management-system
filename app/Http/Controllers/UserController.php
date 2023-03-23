@@ -46,11 +46,15 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function getAuthUser(Request $request): JsonResponse
+    public function getAuthUser()
     {
-        $user = User::findOrFail(Auth::user()->id);
+        $user = User
+            ::select('id', 'name', 'email')
+            ->with('permissions')
+            ->where('id', Auth::user()->id)
+            ->firstOrFail();
 
-        return response()->json($user->getPermissionNames());
+        return response()->json($user);
     }
 
     public function store(Request $request): void
@@ -88,13 +92,11 @@ class UserController extends Controller
         }
     }
 
-    public function getUserPermission(User $user): JsonResponse
+    public function getAuthUserPermissions(): JsonResponse
     {
-        $user = User::findOrFail($user->id);
+        $user = User::findOrFail(Auth::user()->id);
 
-        $permissions = $user->getPermissionNames();
-
-        return response()->json($permissions);
+        return response()->json($user->getPermissionNames());
     }
 
     public function logout()

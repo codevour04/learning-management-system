@@ -6,10 +6,12 @@
                     @submit.prevent="login"
                 >
                     <v-text-field
-                    v-model="form.email"
-                    class="mb-2"
-                    clearable
-                    label="Email or username"
+                        v-model="form.email"
+                        class="mb-2"
+                        clearable
+                        label="Email or username"
+                        :error="hasError"
+                        :error-messages="errorMessage"
                     ></v-text-field>
 
                     <v-text-field
@@ -66,11 +68,10 @@ import Modal from './Dialog.vue'
             form : {
                 email: "",
                 password: ""
-            }
-        }),
-
-    created() {
-    },
+            },
+            hasError: false,
+            errorMessage: '',
+    }),
 
     methods: {
         showDialog () {
@@ -85,8 +86,12 @@ import Modal from './Dialog.vue'
                 if (response.status == 200) {
                     this.$router.push({ path: '/profile' });
                 }
+            })
+            .catch(() => {
+                this.hasError = true;
+                this.errorMessage = 'The email or password is incorrect'
             });
-        }
+        },
     }
   }
 </script>

@@ -1,16 +1,9 @@
 <template>
     <v-app id="inspire">
-        <v-app-bar :elevation="1" class="bg-amber-darken-4">
-            <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title>Welcome, {{ loggedUser.name }} </v-toolbar-title>
-            <v-spacer />
-            <v-btn class="text-right" @click="logout">Logout</v-btn>
-        </v-app-bar>
-        <v-navigation-drawer class="bg-amber-darken-4" v-model="drawer">
-            <div class="d-flex justify-center my-10">
-                <router-link to="/home">Dashboard</router-link>
-            </div>
-        </v-navigation-drawer>
+        <app-bar />
+        <side-drawer ref="navDrawer">
+            <router-link to="/profile"> Dashboard </router-link>
+        </side-drawer>
         <v-main class="bg-grey-lighten-1">
             <v-container fluid class="elevation-2">
                 <v-row>
@@ -114,14 +107,18 @@ import AddUserModal from './AddUserModal.vue';
 import EditUserModal from './EditUserModal.vue';
 import GivePermissionModal from './GivePermissionModal.vue';
 import SwalMessageMixin from './mixins/SwalMessageMixin';
+import AppBar from './components/AppBar.vue';
+import SideDrawer from './components/NavigationDrawer.vue';
 
 export default {
     name: 'DataTable',
 
     components: {
+        AppBar,
         AddUserModal,
         EditUserModal,
         GivePermissionModal,
+        SideDrawer
     },
 
     mixins: [SwalMessageMixin],

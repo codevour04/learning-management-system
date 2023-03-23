@@ -9,12 +9,12 @@ const store = createStore({
         email: "",
         permissions: []
       },
-      count: 0
+      drawToggle: false
     }
   },
   mutations: {
-    increment  (state) {
-      state.count++
+    setDrawToggle (state) {
+      state.drawToggle = !state.drawToggle
     }
   }
 })
