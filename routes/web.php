@@ -16,7 +16,7 @@ Route::middleware([Authenticate::class])->group(function () {
 
     // Route::get('/', function () {
     //     if (Auth::check()) {
-    //         return redirect()->route("profile");
+    //         return redirect()->route('dashboard');
     //     }
 
     //     return view('app.index');
@@ -34,9 +34,10 @@ Route::middleware([Authenticate::class])->group(function () {
             Route::delete('user/{user}', 'destroy')->middleware('can:delete users');
             Route::put('user/{user}/permission', [UserController::class, 'givePermissionTo'])
             ->middleware('can:give permission users');
-            Route::get('auth-user-permissions', [UserController::class, 'getAuthUser']);
+            Route::get('auth-user', [UserController::class, 'getAuthUser']);
+            Route::get('auth-user-permissions', [UserController::class, 'getUserPermission']);
             Route::get('logout', 'logout');
-            Route::get('permissions/user/{user}', [UserController::class, 'getUserPermission']);
+            Route::get('permissions/user', [UserController::class, 'getAuthUserPermissions']);
         });
     });
 
