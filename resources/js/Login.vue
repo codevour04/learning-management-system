@@ -29,9 +29,10 @@
                     >
                     Sign In
                     </v-btn>
-                    <div class="d-flex justify-center mt-5">
+                    <!-- TO DO -->
+                    <!-- <div class="d-flex justify-center mt-5">
                         <a href="">Forgot passowrd?</a>
-                    </div>
+                    </div> -->
                 </v-form>
                 <v-divider class="my-5"></v-divider>
                     <v-btn
@@ -82,7 +83,7 @@ import Modal from './Dialog.vue'
             this.$http.post("/login", payload)
             .then(response => {
                 if (response.status == 200) {
-                    this.$router.push({ path: '/management/profile' });
+                    this.$router.push({ path: '/profile' });
                 }
             });
         }

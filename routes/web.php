@@ -9,20 +9,18 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PermissionController;
 
 Route::middleware([Authenticate::class])->group(function () {
-    Route::get('/management/{any}', [AppController::class, 'index'])->where('any', '.*');
-
     // Route::get('profile', function () {
     //     return view('auth.profile');
     // })
     // ->name("profile");
 
-    Route::get('/', function () {
-        if (Auth::check()) {
-            return redirect()->route("/management/profile");
-        }
+    // Route::get('/', function () {
+    //     if (Auth::check()) {
+    //         return redirect()->route("profile");
+    //     }
 
-        return view('index');
-    });
+    //     return view('app.index');
+    // });
 
     Route::group(['middleware' => ['permission:view roles and permissions']], function () {
         Route::get('roles-and-permissions', [PermissionController::class, 'index']);
@@ -30,13 +28,13 @@ Route::middleware([Authenticate::class])->group(function () {
 
     Route::controller(UserController::class)->group(function () {
         Route::prefix('ajax')->group(function () {
-            Route::get('user', [UserController::class, 'getUserList'])->middleware('can:view users');
+            Route::get('users', [UserController::class, 'getUserList'])->middleware('can:view users');
             Route::post('user', 'store')->middleware('can:add users');
             Route::patch('user/{user}', 'update')->middleware('can:update users');
             Route::delete('user/{user}', 'destroy')->middleware('can:delete users');
             Route::put('user/{user}/permission', [UserController::class, 'givePermissionTo'])
             ->middleware('can:give permission users');
-            Route::get('auth-user', [UserController::class, 'getAuthUser']);
+            Route::get('auth-user-permissions', [UserController::class, 'getAuthUser']);
             Route::get('logout', 'logout');
             Route::get('permissions/user/{user}', [UserController::class, 'getUserPermission']);
         });
@@ -49,3 +47,5 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::post('customer', [CustomerController::class, 'store']);
     });
 });
+
+Route::get('/{any}', [AppController::class, 'index'])->where('any', '.*');

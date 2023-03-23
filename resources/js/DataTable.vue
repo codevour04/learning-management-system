@@ -8,7 +8,7 @@
         </v-app-bar>
         <v-navigation-drawer class="bg-amber-darken-4" v-model="drawer">
             <div class="d-flex justify-center my-10">
-                <router-link to="/management/home">Dashboard</router-link>
+                <router-link to="/home">Dashboard</router-link>
             </div>
         </v-navigation-drawer>
         <v-main class="bg-grey-lighten-1">
@@ -141,11 +141,13 @@ export default {
             { text: "", value: "add-permission"},
             { text: "", value: "remove-permission"}
         ],
-        }),
+        loggedUserPermissions: []
+    }),
 
     created() {
         this.getAuthUser();
         this.fetchUser();
+        this.getLoggedUserPermissions();
     },
 
     computed: {
@@ -156,8 +158,8 @@ export default {
         canDeleteUser () {
             let canDo = false;
 
-            this.loggedUser.permissions.forEach(permission => {
-                if (permission.name === "delete users") {
+            this.loggedUserPermissions.forEach(permission => {
+                if (permission === "delete users") {
                     canDo = true;
                 }
             });
@@ -168,8 +170,8 @@ export default {
         canAddUser () {
             let canDo = false;
 
-            this.loggedUser.permissions.forEach(permission => {
-                if (permission.name === "add users") {
+            this.loggedUserPermissions.forEach(permission => {
+                if (permission === "add users") {
                     canDo = true;
                 }
             });
@@ -180,8 +182,8 @@ export default {
         canUpdateUser () {
             let canDo = false;
 
-            this.loggedUser.permissions.forEach(permission => {
-                if (permission.name === "update users") {
+            this.loggedUserPermissions.forEach(permission => {
+                if (permission === "update users") {
                     canDo = true;
                 }
             });
@@ -192,8 +194,8 @@ export default {
         canGivePermissionUser () {
             let canDo = false;
 
-            this.loggedUser.permissions.forEach(permission => {
-                if (permission.name === "give permission users") {
+            this.loggedUserPermissions.forEach(permission => {
+                if (permission === "give permission users") {
                     canDo = true;
                 }
             });
@@ -204,7 +206,7 @@ export default {
 
     methods: {
         fetchUser () {
-            this.$http.get('/ajax/user', {
+            this.$http.get('ajax/users', {
                 params: {
                     keyword: this.keyword
                 }
@@ -289,11 +291,15 @@ export default {
         },
 
         getAuthUser () {
-            this.$http.get('/ajax/auth-user')
-                .then(response => {
-                    this.$store.state.user = response.data.user
-                })
+            this.$store.state.user = window.App.user
         },
+
+        getLoggedUserPermissions () {
+            this.$http.get('ajax/auth-user-permissions')
+                .then(response => {
+                    this.loggedUserPermissions = response.data;
+                })
+        }
     }
 }
 </script>

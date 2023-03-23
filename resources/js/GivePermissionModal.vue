@@ -12,9 +12,9 @@
                     User permissions:
                 </v-card-title>
                 <ul class="permission-list">
-                    <v-card-title class="permission" v-for="permission in userPermission" :key="permission.id">
+                    <v-card-title class="permission" v-for="permission in userPermission" :key="permission">
                     <li>
-                        {{ permission.name }}
+                        {{ permission }}
                     </li>
                     </v-card-title>
                 </ul>
@@ -80,7 +80,7 @@ export default {
     }),
 
     created () {
-        this.fetchPermissions();
+        this.fetchAllPermissions();
     },
 
     methods: {
@@ -88,7 +88,7 @@ export default {
             this.showDialog = true;
             this.user = data;
             this.action = action;
-            // this.fetchUserPermission()
+            this.fetchUserPermissions()
         },
 
         givePermission () {
@@ -117,8 +117,8 @@ export default {
                 })
         },
 
-        fetchPermissions () {
-            this.$http.get("/ajax/permissions")
+        fetchAllPermissions () {
+            this.$http.get("ajax/permissions")
                 .then(response => {
                     this.permissions = response.data.map((permission) => ({
                             "title": permission.name
@@ -130,10 +130,9 @@ export default {
             this.$emit("permission-add-remove");
         },
 
-        fetchUserPermission () {
+        fetchUserPermissions () {
             this.$http.get("ajax/permissions/user/"+this.user.id)
                 .then(response => {
-                    console.log(response);
                     this.userPermission = response.data
 
                 })
