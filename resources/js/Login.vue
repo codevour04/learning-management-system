@@ -1,77 +1,84 @@
 <template>
     <div class="d-flex justify-center align-center" style="height: 70vh">
-    <v-card min-width="400">
+        <v-card min-width="400">
             <v-card-text>
-                <v-form
-                    @submit.prevent="login"
-                >
+                <v-form @submit.prevent="login">
                     <v-text-field
-                        v-model="form.email"
-                        class="mb-2"
-                        clearable
-                        label="Email or username"
-                        :error="hasError"
                         :error-messages="errorMessage"
+                        :error="hasError"
+                        class="mb-2"
+                        label="Email or username"
+                        v-model="form.email"
                     ></v-text-field>
 
                     <v-text-field
-                    v-model="form.password"
-                    clearable
-                    label="Password"
+                        :append-inner-icon="showHidePassword ? 'mdi-eye' : appendIcon"
+                        :type="showHidePassword ? 'text' : 'password'"
+                        @click:append-inner="showHidePassword = !showHidePassword"
+                        label="Password"
+                        v-model="form.password"
                     ></v-text-field>
 
                     <br>
 
                     <v-btn
-                    block
-                    color="blue"
-                    size="large"
-                    type="submit"
-                    variant="elevated"
+                        block
+                        color="blue"
+                        size="large"
+                        type="submit"
+                        variant="elevated"
                     >
-                    Sign In
+                        Sign In
                     </v-btn>
                     <!-- TO DO -->
                     <!-- <div class="d-flex justify-center mt-5">
                         <a href="">Forgot passowrd?</a>
                     </div> -->
                 </v-form>
-                <v-divider class="my-5"></v-divider>
-                    <v-btn
+                <v-divider class="my-5" />
+                <v-btn
+                    @click="showDialog"
                     block
                     color="success"
                     size="large"
                     type="submit"
                     variant="elevated"
-                    @click="showDialog"
-                    >
+                >
                     Register
                 </v-btn>
             </v-card-text>
         </v-card>
     </div>
-    <modal ref="modal"></modal>
+    <register-form ref="modal" />
 </template>
 
 <script>
-import Modal from './Dialog.vue'
+import RegisterForm from './RegisterForm.vue'
 
   export default {
     name: 'Login',
 
     components: {
-        Modal,
+        RegisterForm,
     },
 
-    data: () =>
-        ({
+    data () {
+        return {
+            errorMessage: "",
             form : {
                 email: "",
                 password: ""
             },
             hasError: false,
-            errorMessage: '',
-    }),
+            showHidePassword: false,
+        }
+    },
+
+    computed: {
+        appendIcon () {
+            return (this.form.password.length > 0) ? "mdi-eye-off" : "";
+        }
+    },
 
     methods: {
         showDialog () {
@@ -82,15 +89,15 @@ import Modal from './Dialog.vue'
             let payload = this.form;
 
             this.$http.post("/login", payload)
-            .then(response => {
-                if (response.status == 200) {
-                    this.$router.push({ path: '/profile' });
-                }
-            })
-            .catch(() => {
-                this.hasError = true;
-                this.errorMessage = 'The email or password is incorrect'
-            });
+                .then(response => {
+                    if (response.status == 200) {
+                        this.$router.push({ path: "/profile" });
+                    }
+                })
+                .catch(() => {
+                    this.hasError = true;
+                    this.errorMessage = "The email or password is incorrect"
+                });
         },
     }
   }
