@@ -30,27 +30,11 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function getUserList(Request $request): JsonResponse
-    {
-        $has_search = $request->keyword;
-
-        $user = User::select(["id", "name", "email"])
-            ->with("permissions")
-            ->when($has_search,
-            function ($query) use ($has_search) {
-                $query->where('name', 'LIKE', "$has_search%");
-            })
-            ->orderBy("created_at", "DESC")
-            ->get();
-
-        return response()->json($user);
-    }
-
     public function getAuthUser()
     {
         $user = User
             ::select('id', 'name', 'email')
-            ->with('permissions')
+            ->with('permissions:id,name')
             ->where('id', Auth::user()->id)
             ->firstOrFail();
 
@@ -97,6 +81,13 @@ class UserController extends Controller
         $user = User::findOrFail(Auth::user()->id);
 
         return response()->json($user->getPermissionNames());
+    }
+
+    public function getPermissionsUser(User $user): JsonResponse
+    {
+        $permission_names = User::findOrFail($user->id)->getPermissionNames();
+
+        return response()->json($permission_names);
     }
 
     public function logout()

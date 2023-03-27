@@ -16,7 +16,7 @@
                         ></v-text-field>
                     </v-col>
                     <v-col>
-                        <v-btn @click="fetchUser">
+                        <v-btn @click="fetchUsers">
                             Search
                         </v-btn>
                     </v-col>
@@ -28,12 +28,12 @@
                                 :headers="headers"
                                 :items="users"
                             >
-                                <template #item-edit="item" >
+                                <template #item-edit="item" v-if="hasPermissions">
                                     <v-btn
                                         class="my-5"
                                         color="green"
                                         @click="updateUser(item)"
-                                        v-if="canUpdateUser"
+                                        v-if="canDo(permissionTags.UPDATE_USERS)"
                                         >
                                         Edit
                                     </v-btn>
@@ -42,7 +42,7 @@
                                     <v-btn
                                         color="red"
                                         @click="showConfirmModal(item)"
-                                        v-if="canDeleteUser"
+                                        v-if="canDo(permissionTags.DELETE_USERS)"
                                     >
                                         Delete
                                     </v-btn>
@@ -51,7 +51,7 @@
                                     <v-btn
                                         color="yellow"
                                         @click="openPermissionModal(item, 'add')"
-                                        v-if="canGivePermissionUser"
+                                        v-if="canDo(permissionTags.GIVE_PERMISSION_USERS)"
                                     >
                                         Give Permission
                                     </v-btn>
@@ -60,7 +60,8 @@
                                     <v-btn
                                         color="green"
                                         @click="openPermissionModal(item, 'remove')"
-                                        v-if="canGivePermissionUser && item.permissions.length > 0"
+                                        v-if="canDo(permissionTags.GIVE_PERMISSION_USERS)
+                                            && item.permissions.length > 0"
                                     >
                                         Remove Permission
                                     </v-btn>
@@ -76,7 +77,7 @@
                         class="ml-3 mb-3"
                         color="green"
                         @click="openModal"
-                        v-if="canAddUser"
+                        v-if="canDo(permissionTags.ADD_USERS)"
                     >
                         Add User
                     </v-btn>
@@ -103,12 +104,13 @@ a {
 <script>
 
 import { mapState } from 'vuex';
+import * as ACLConstants from './lookups/acl-constants';
 import AddUserModal from './AddUserModal.vue';
+import AppBar from './components/AppBar.vue';
 import EditUserModal from './EditUserModal.vue';
 import GivePermissionModal from './GivePermissionModal.vue';
-import SwalMessageMixin from './mixins/SwalMessageMixin';
-import AppBar from './components/AppBar.vue';
 import SideDrawer from './components/NavigationDrawer.vue';
+import SwalMessageMixin from './mixins/SwalMessageMixin';
 
 export default {
     name: 'DataTable',
@@ -123,86 +125,50 @@ export default {
 
     mixins: [SwalMessageMixin],
 
-    data: () => ({
-        drawer: false,
-        loading: false,
-        users: [],
-        swalMessage: "",
-        keyword: "",
-        headers:
-        [
-            { text: "Name", value: "name", sortable: true},
-            { text: "EMAIL", value: "email"},
-            { text: "", value: "edit"},
-            { text: "", value: "delete"},
-            { text: "", value: "add-permission"},
-            { text: "", value: "remove-permission"}
-        ],
-        loggedUserPermissions: []
-    }),
+    data () {
+        return {
+            drawer: false,
+            hasPermissions: false,
+            headers:
+            [
+                { text: "Name", value: "name", sortable: true},
+                { text: "EMAIL", value: "email"},
+                { text: "", value: "edit"},
+                { text: "", value: "delete"},
+                { text: "", value: "add-permission"},
+                { text: "", value: "remove-permission"}
+            ],
+            keyword: "",
+            loading: false,
+            loggedUserPermissions: [],
+            permissionTags: null,
+            swalMessage: "",
+            users: [],
+        }
+    },
 
-    created() {
-        this.getAuthUser();
-        this.fetchUser();
-        this.getLoggedUserPermissions();
+    watch: {
+        user (user) {
+            if (user.hasOwnProperty('permissions')) {
+                this.hasPermissions = true;
+            }
+        }
+    },
+
+    created () {
+        this.fetchUsers();
+
+        this.permissionTags = ACLConstants;
     },
 
     computed: {
         ...mapState({
-            loggedUser: state => state.user,
+            user: state => state.user,
         }),
-
-        canDeleteUser () {
-            let canDo = false;
-
-            this.loggedUserPermissions.forEach(permission => {
-                if (permission === "delete users") {
-                    canDo = true;
-                }
-            });
-
-            return canDo;
-        },
-
-        canAddUser () {
-            let canDo = false;
-
-            this.loggedUserPermissions.forEach(permission => {
-                if (permission === "add users") {
-                    canDo = true;
-                }
-            });
-
-            return canDo;
-        },
-
-        canUpdateUser () {
-            let canDo = false;
-
-            this.loggedUserPermissions.forEach(permission => {
-                if (permission === "update users") {
-                    canDo = true;
-                }
-            });
-
-            return canDo;
-        },
-
-        canGivePermissionUser () {
-            let canDo = false;
-
-            this.loggedUserPermissions.forEach(permission => {
-                if (permission === "give permission users") {
-                    canDo = true;
-                }
-            });
-
-            return canDo;
-        },
     },
 
     methods: {
-        fetchUser () {
+        fetchUsers () {
             this.$http.get('ajax/users', {
                 params: {
                     keyword: this.keyword
@@ -221,8 +187,8 @@ export default {
         },
 
         showSuccessMessage() {
-            this.swalMixinSuccessMessage(this.swalMessage)
-            this.fetchUser()
+            this.swalMixinSuccessMessage(this.swalMessage);
+            this.fetchUsers();
         },
 
         readUser (user) {
@@ -244,7 +210,7 @@ export default {
 
         resetData() {
             this.users = null;
-            this.fetchUser();
+            this.fetchUsers();
         },
 
         showConfirmModal (user) {
@@ -260,7 +226,7 @@ export default {
 
             this.$swal.fire(config).then((result) => {
                 if (result.isConfirmed) {
-                    this.deleteUser(user)
+                    this.deleteUser(user);
                 }
             })
         },
@@ -272,7 +238,7 @@ export default {
                 .then(() => {
                     this.swalMessage = 'User has been deleted';
                     this.showSuccessMessage();
-                    this.fetchUser();
+                    this.fetchUsers();
                 })
         },
 
@@ -287,16 +253,17 @@ export default {
             this.$refs.permissionModal.showModal(user, action);
         },
 
-        getAuthUser () {
-            this.$store.state.user = window.App.user
-        },
+        canDo (action) {
+            let canDo = false;
 
-        getLoggedUserPermissions () {
-            this.$http.get('ajax/auth-user-permissions')
-                .then(response => {
-                    this.loggedUserPermissions = response.data;
-                })
-        }
+            let allPermissions = this.user.permissions.map((permission) => {
+                return permission.name;
+            });
+
+            canDo = allPermissions.includes(action);
+
+            return canDo;
+        },
     }
 }
 </script>

@@ -12,9 +12,20 @@ const store = createStore({
       drawToggle: false
     }
   },
+
+  getters: {
+    user (state) {
+      return state.user
+    }
+  },
+
   mutations: {
     setDrawToggle (state) {
       state.drawToggle = !state.drawToggle
+    },
+
+    setUser (state, value) {
+      state.user = value;
     }
   }
 })

@@ -24,7 +24,7 @@ export default {
         }
     },
 
-    mounted () {
+    created () {
         this.getAuthUserAndPermissions();
     },
 
@@ -48,9 +48,8 @@ export default {
         getAuthUserAndPermissions () {
             this.$http.get("ajax/auth-user")
                 .then(response => {
-
-                    this.loggedInUserPermissions = response.data.permissions
-                    this.$store.state.user = response.data;
+                    this.loggedInUserPermissions = response.data.permissions;
+                    this.$store.commit('setUser', response.data);
                     window.App.user = response.data;
                 })
         },
