@@ -125,26 +125,27 @@ export default {
 
     mixins: [SwalMessageMixin],
 
-    data: () => ({
-        drawer: false,
-        headers:
-        [
-            { text: "Name", value: "name", sortable: true},
-            { text: "EMAIL", value: "email"},
-            { text: "", value: "edit"},
-            { text: "", value: "delete"},
-            { text: "", value: "add-permission"},
-            { text: "", value: "remove-permission"}
-        ],
-        keyword: "",
-        loading: false,
-        loggedUserPermissions: [],
-        permissionTags: null,
-        swalMessage: "",
-        users: [],
-        hasPermissions: false,
-
-    }),
+    data () {
+        return {
+            drawer: false,
+            hasPermissions: false,
+            headers:
+            [
+                { text: "Name", value: "name", sortable: true},
+                { text: "EMAIL", value: "email"},
+                { text: "", value: "edit"},
+                { text: "", value: "delete"},
+                { text: "", value: "add-permission"},
+                { text: "", value: "remove-permission"}
+            ],
+            keyword: "",
+            loading: false,
+            loggedUserPermissions: [],
+            permissionTags: null,
+            swalMessage: "",
+            users: [],
+        }
+    },
 
     watch: {
         user (user) {
@@ -154,7 +155,7 @@ export default {
         }
     },
 
-    created() {
+    created () {
         this.fetchUsers();
 
         this.permissionTags = ACLConstants;
@@ -186,8 +187,8 @@ export default {
         },
 
         showSuccessMessage() {
-            this.swalMixinSuccessMessage(this.swalMessage)
-            this.fetchUsers()
+            this.swalMixinSuccessMessage(this.swalMessage);
+            this.fetchUsers();
         },
 
         readUser (user) {
@@ -225,7 +226,7 @@ export default {
 
             this.$swal.fire(config).then((result) => {
                 if (result.isConfirmed) {
-                    this.deleteUser(user)
+                    this.deleteUser(user);
                 }
             })
         },
