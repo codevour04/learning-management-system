@@ -29,13 +29,13 @@ Route::middleware([Authenticate::class])->group(function () {
 
     Route::controller(UserController::class)->group(function () {
         Route::prefix('ajax')->group(function () {
-            Route::get('users', [UserController::class, 'getUserList'])->middleware('can:view users');
+            Route::get('users', 'index')->middleware('can:view users');
             Route::post('user', 'store')->middleware('can:add users');
             Route::patch('user/{user}', 'update')->middleware('can:update users');
             Route::delete('user/{user}', 'destroy')->middleware('can:delete users');
             Route::put('user/{user}/permission', [UserController::class, 'givePermissionTo'])
             ->middleware('can:give permission users');
-            Route::get('auth-user', [UserController::class, 'getAuthUser']);
+            Route::get('auth-user', 'getAuthUser');
             Route::get('auth-user-permissions', [UserController::class, 'getUserPermission']);
             Route::get('logout', 'logout');
             Route::get('permissions/user', [UserController::class, 'getAuthUserPermissions']);

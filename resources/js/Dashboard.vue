@@ -24,7 +24,7 @@
                     </v-col> -->
                     <v-col v-if="hasSales">
                         <div class="d-flex justify-center">
-                            <apexchart type="pie" width="700" :options="chartOptionsPie" :series="seriesPie" />
+                            <apexchart type="pie" width="700" :options="pieOptions" :series="monthlySales" />
                         </div>
                     </v-col>
                     <v-col v-else>
@@ -59,7 +59,7 @@ const MONTHS = [
     'June',
     'July',
     'August',
-    'Spetember',
+    'September',
     'October',
     'November',
     'December',
@@ -83,7 +83,7 @@ export default {
             //         categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
             //     },
             // },
-            chartOptionsPie: {
+            pieOptions: {
                 chart: {
                     width: 700,
                     type: 'pie',
@@ -108,7 +108,7 @@ export default {
             //         data: [30, 40, 35, 50, 49, 60, 70, 91],
             //     },
             // ],
-            seriesPie: [],
+            monthlySales: [],
         }
     },
 
@@ -163,11 +163,11 @@ export default {
         },
 
         hasSales () {
-            let sum = this.seriesPie.reduce(function (previous, current) {
+            let sum = this.monthlySales.reduce(function (previous, current) {
                 return previous + current;
             }, 0);
 
-            return (sum > 0) ? true : false;
+            return (sum > 0) ?? false;
         },
 
         canViewUserManagement () {
@@ -186,7 +186,7 @@ export default {
                 .then(response => {
 
                     this.loggedInUserPermissions = response.data.permissions
-                    this.$store.state.user = response.data;
+                    this.$store.commit('setUser', response.data);
                     window.App.user = response.data;
                 })
         },
@@ -198,12 +198,13 @@ export default {
         fetchTransactions () {
             this.$http.get("ajax/transactions")
                 .then((response) => {
-                    let monthly_sales = response.data;
+                    let sales = response.data;
+
                     MONTHS.forEach((month) => {
-                        if (monthly_sales[month]) {
-                            this.seriesPie.push(monthly_sales[month]);
+                        if (sales[month]) {
+                            this.monthlySales.push(sales[month]);
                         } else {
-                            this.seriesPie.push(0);
+                            this.monthlySales.push(0);
                         }
                     })
                 });
