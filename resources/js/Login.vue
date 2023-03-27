@@ -22,6 +22,7 @@
                     <br>
 
                     <v-btn
+                        :loading="loading"
                         block
                         color="blue"
                         size="large"
@@ -70,6 +71,7 @@ import RegisterForm from './RegisterForm.vue'
                 password: ""
             },
             hasError: false,
+            loading: false,
             showHidePassword: false,
         }
     },
@@ -87,14 +89,16 @@ import RegisterForm from './RegisterForm.vue'
 
         login () {
             let payload = this.form;
+            this.loading = true;
 
             this.$http.post("/login", payload)
                 .then(response => {
                     if (response.status == 200) {
-                        this.$router.push({ path: "/profile" });
+                        this.$router.push({ path: "/dashboard" });
                     }
                 })
                 .catch(() => {
+                    this.loading = false;
                     this.hasError = true;
                     this.errorMessage = "The email or password is incorrect"
                 });

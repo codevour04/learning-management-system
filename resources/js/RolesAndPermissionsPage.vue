@@ -63,7 +63,7 @@ export default {
                 })
                 .catch(error => {
                     if (error.request.status == 403) {
-                        this.$router.push({ path: '/profile' });
+                        this.$router.push({ path: '/dashboard' });
                     }
                 });
         }

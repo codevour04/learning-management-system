@@ -2,13 +2,13 @@
     <v-app id="inspire">
         <v-app-bar class="bg-amber-darken-4">
             <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title>Dashboard</v-toolbar-title>
+            <v-toolbar-title>Admin</v-toolbar-title>
             <v-spacer />
             <v-btn class="text-right" @click="logout">Logout</v-btn>
         </v-app-bar>
         <v-navigation-drawer v-model="drawer">
             <div class="d-flex justify-center my-10">
-                <router-link to="/management/profile">Profile</router-link>
+                <router-link to="/dashboard">Dashboard</router-link>
             </div>
             <div class="d-flex justify-center my-10">
                 <router-link to="/management/user">User management</router-link>

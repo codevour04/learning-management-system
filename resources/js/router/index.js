@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import DataTable from '../DataTable.vue'
 import Login from '../Login.vue'
-import Profile from '../Profile.vue'
+import Dashboard from '../Dashboard.vue'
 import AdminPage from '../AdminPage.vue'
 import RolesAndPermissions from '../RolesAndPermissionsPage.vue'
 import CoursesPage from '../CoursesPage.vue'
@@ -32,8 +32,8 @@ const routes = [
     },
 
     {
-        path: '/profile',
-        component: Profile,
+        path: '/dashboard',
+        component: Dashboard,
     },
 
     {
