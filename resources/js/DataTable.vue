@@ -255,11 +255,11 @@ export default {
         canDo (action) {
             let canDo = false;
 
-            this.user.permissions.forEach(permission => {
-                if (permission.name === action) {
-                    canDo = true;
-                }
+            let allPermissions = this.user.permissions.map((permission) => {
+                return permission.name;
             });
+
+            canDo = allPermissions.includes(action);
 
             return canDo;
         },

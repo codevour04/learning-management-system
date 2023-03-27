@@ -83,6 +83,13 @@ class UserController extends Controller
         return response()->json($user->getPermissionNames());
     }
 
+    public function getPermissionsUser(User $user): JsonResponse
+    {
+        $permission_names = User::findOrFail($user->id)->getPermissionNames();
+
+        return response()->json($permission_names);
+    }
+
     public function logout()
     {
         Session::flush();
