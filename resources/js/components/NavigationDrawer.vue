@@ -26,7 +26,8 @@ export default {
 
     computed: {
         ...mapState({
-            drawToggle: state => state.drawToggle
+            drawToggle: state => state.drawToggle,
+            user: state => state.user,
         }),
     },
 

@@ -13,6 +13,7 @@ import Axios from 'axios'
 import router from './router'
 import store from './store'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
+import VueApexCharts from "vue3-apexcharts";
 import VueSweetalert2 from 'vue-sweetalert2'
 
 const vuetify = createVuetify({
@@ -34,6 +35,7 @@ app.use(createPinia())
   .use(vuetify)
   .use(router)
   .use(VueSweetalert2)
+  .use(VueApexCharts)
   .component('EasyDataTable', Vue3EasyDataTable);
 
 app.config.globalProperties.$http = Axios;

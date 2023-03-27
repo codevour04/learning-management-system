@@ -5,11 +5,32 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
+    public function index(): JsonResponse
+    {
+        $user_id = Auth::id();
+
+        $monthly_sales = DB::transaction(function () use ($user_id) {
+            $transactions = Transaction
+                ::where('sales_agent', $user_id)->pluck('issued_at');
+
+            return $transactions->map(function ($date_time) {
+                $month_name = Carbon::parse($date_time)->format('F');
+                return $month_name;
+            })
+            ->countBy();
+        });
+
+        return response()->json($monthly_sales);
+    }
+
     public function getList(Request $request): JsonResponse
     {
         $transactionList = Transaction

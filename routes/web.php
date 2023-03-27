@@ -7,6 +7,7 @@ use App\Http\Controllers\AppController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\TransactionController;
 
 Route::middleware([Authenticate::class])->group(function () {
     // Route::get('profile', function () {
@@ -38,6 +39,12 @@ Route::middleware([Authenticate::class])->group(function () {
             Route::get('auth-user-permissions', [UserController::class, 'getUserPermission']);
             Route::get('logout', 'logout');
             Route::get('permissions/user', [UserController::class, 'getAuthUserPermissions']);
+        });
+    });
+
+    Route::controller(TransactionController::class)->group(function () {
+        Route::prefix('ajax')->group(function () {
+            Route::get('transactions', 'index');
         });
     });
 

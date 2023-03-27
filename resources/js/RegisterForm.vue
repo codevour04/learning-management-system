@@ -40,6 +40,7 @@
                         <br>
 
                         <v-btn
+                            :loading="loading"
                             block
                             color="blue"
                             size="large"
@@ -75,6 +76,7 @@ export default {
                 email: false,
                 password: false
             },
+            loading: false,
             showHidePassword: false,
             showModal: false,
         }
@@ -93,10 +95,12 @@ export default {
 
         submit () {
             let payload = this.form;
+            this.loading = true;
 
             this.$http.post("/register", payload)
-                .then(() => this.$router.push({ path: "/profile" }))
+                .then(() => this.$router.push({ path: "/dashboard" }))
                 .catch(errors => {
+                    this.loading = false;
                     let errorMessages = errors.response.data.errors;
                     this.errors = errorMessages;
 
@@ -108,12 +112,6 @@ export default {
                         this.hasError.password = true;
                     }
                 });
-
-            if (this.hasError.email || this.hasError.password) {
-                // do nothing
-            } else {
-
-            }
         }
     }
 }

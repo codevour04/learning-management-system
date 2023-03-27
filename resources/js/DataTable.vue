@@ -2,7 +2,7 @@
     <v-app id="inspire">
         <app-bar />
         <side-drawer ref="navDrawer">
-            <router-link to="/profile"> Dashboard </router-link>
+            <router-link to="/dashboard"> Dashboard </router-link>
         </side-drawer>
         <v-main class="bg-grey-lighten-1">
             <v-container fluid class="elevation-2">
@@ -215,7 +215,7 @@ export default {
             })
             .catch(error => {
                 if (error.request.status == 403) {
-                    this.$router.push({ path: '/profile' });
+                    this.$router.push({ path: '/dashboard' });
                 }
             });
         },
